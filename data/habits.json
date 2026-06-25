@@ -1,0 +1,66 @@
+{
+  "habits": [
+    {
+      "id": "1",
+      "name": "Learn French",
+      "emoji": "👄",
+      "color": "#e8a317",
+      "frequency": "daily",
+      "targetCount": 2,
+      "startDate": "2025-06-25",
+      "completions": []
+    },
+    {
+      "id": "2",
+      "name": "Meditation",
+      "emoji": "🧘",
+      "color": "#3b9fd9",
+      "frequency": "daily",
+      "targetCount": 1,
+      "startDate": "2025-06-25",
+      "completions": []
+    },
+    {
+      "id": "3",
+      "name": "Programming",
+      "emoji": "💻",
+      "color": "#8b7355",
+      "frequency": "weekly",
+      "targetCount": 3,
+      "startDate": "2025-06-25",
+      "completions": []
+    },
+    {
+      "id": "4",
+      "name": "Read a book",
+      "emoji": "📖",
+      "color": "#4caf50",
+      "frequency": "weekly",
+      "targetCount": 1,
+      "startDate": "2025-06-25",
+      "completions": []
+    },
+    {
+      "id": "5",
+      "name": "Side Hustle",
+      "emoji": "💼",
+      "color": "#e040a0",
+      "frequency": "monthly",
+      "targetCount": 10,
+      "startDate": "2025-06-25",
+      "completions": []
+    },
+    {
+      "id": "6",
+      "name": "Workout",
+      "emoji": "🏋️",
+      "color": "#9b59b6",
+      "frequency": "daily",
+      "targetCount": 1,
+      "startDate": "2025-06-25",
+      "completions": []
+    }
+  ],
+  "settings": {},
+  "savedAt": "2025-06-25T00:00:00.000Z"
+}

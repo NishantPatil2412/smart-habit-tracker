@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Habit Tracker 2024</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon" aria-hidden="true"></div>
+          <div>
+            <h1>Smart Habit<br>Tracker 2024</h1>
+            <p class="level-badge" id="level-badge">Level 1 · 0 XP</p>
+          </div>
+        </div>
+        <section class="user-switcher" id="user-switcher"></section>
+        <div class="sidebar-actions">
+          <button type="button" class="btn btn-outline btn-full" id="btn-add-habit">+ Add Habit</button>
+        </div>
+      </header>
+
+      <section class="sidebar-stats" id="sidebar-stats"></section>
+
+      <section class="goal-progress">
+        <h2>Goal Progress</h2>
+        <div id="sidebar-progress"></div>
+      </section>
+
+      <section class="achievements-section">
+        <h2>Achievements</h2>
+        <div id="achievements-list" class="achievements-list"></div>
+      </section>
+
+      <nav class="sidebar-nav">
+        <h2>Navigation</h2>
+        <button type="button" class="nav-link" id="btn-manage">Manage Habits</button>
+        <button type="button" class="nav-link" id="btn-settings">Settings</button>
+        <div class="data-actions">
+          <button type="button" class="btn btn-sm" id="btn-undo" disabled>↩ Undo</button>
+          <button type="button" class="btn btn-sm" id="btn-export-user">Export Profile</button>
+          <button type="button" class="btn btn-sm" id="btn-export">Export All</button>
+          <label class="btn btn-sm">
+            Import Data
+            <input type="file" id="input-import" accept=".json" hidden />
+          </label>
+        </div>
+        <p class="data-hint" id="data-status">Data saved locally</p>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div id="dashboard" class="dashboard"></div>
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="habits">Habits</button>
+        <button type="button" class="tab" data-tab="today">Today's Tracker</button>
+        <button type="button" class="tab" data-tab="monthly">Monthly</button>
+        <button type="button" class="tab" data-tab="quarterly">Quarterly</button>
+        <button type="button" class="tab" data-tab="yearly">Yearly</button>
+        <button type="button" class="tab" data-tab="stats">Stats</button>
+      </div>
+
+      <div id="habits-toolbar" class="habits-toolbar"></div>
+
+      <div id="panel-habits" class="panel active"></div>
+      <div id="panel-today" class="panel"></div>
+      <div id="panel-monthly" class="panel"></div>
+      <div id="panel-quarterly" class="panel"></div>
+      <div id="panel-yearly" class="panel"></div>
+      <div id="panel-stats" class="panel"></div>
+    </main>
+  </div>
+
+  <dialog id="habit-modal" class="modal">
+    <form id="habit-form" method="dialog">
+      <h2 id="habit-modal-title">Add New Habit</h2>
+      <div class="template-row" id="template-row"></div>
+      <input type="hidden" id="habit-id" />
+      <label>Name<input type="text" id="habit-name" required placeholder="e.g. Drink water" /></label>
+      <label>Description <span class="optional">(optional)</span>
+        <textarea id="habit-description" rows="2" placeholder="Why this habit matters…"></textarea>
+      </label>
+      <div class="form-row">
+        <label>Emoji<input type="text" id="habit-emoji" value="⭐" maxlength="4" /></label>
+        <label>Target<input type="number" id="habit-target" min="1" value="1" required /></label>
+      </div>
+      <div class="form-row">
+        <label>Frequency
+          <select id="habit-frequency">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </label>
+        <label>Category
+          <select id="habit-category">
+            <option value="health">Health</option>
+            <option value="mind">Mind</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Start Date<input type="date" id="habit-start" required /></label>
+        <label>Reminder <span class="optional">(optional)</span>
+          <input type="time" id="habit-reminder" />
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Start Time <span class="optional">(optional)</span>
+          <input type="time" id="habit-start-time" />
+        </label>
+        <label>End Time <span class="optional">(optional)</span>
+          <input type="time" id="habit-end-time" />
+        </label>
+      </div>
+      <label class="checkbox-label">
+        <input type="checkbox" id="habit-track-steps" /> Track step count (walk)
+      </label>
+      <div id="step-target-row" class="form-row" style="display:none">
+        <label>Daily step goal<input type="number" id="habit-step-target" min="100" step="100" value="10000" /></label>
+      </div>
+      <label class="checkbox-label">
+        <input type="checkbox" id="habit-track-liters" /> Track water intake (liters)
+      </label>
+      <div id="liter-target-row" class="form-row" style="display:none">
+        <label>Daily liter goal<input type="number" id="habit-liter-target" min="0.1" step="0.1" value="2" /></label>
+      </div>
+      <fieldset class="color-picker">
+        <legend>Color</legend>
+        <div id="color-options"></div>
+      </fieldset>
+      <label class="checkbox-label">
+        <input type="checkbox" id="habit-pinned" /> Pin to top
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="habit-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Habit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-modal" class="modal">
+    <h2>Settings</h2>
+    <div class="settings-body">
+      <label class="toggle-row">
+        <span>Dark mode</span>
+        <input type="checkbox" id="setting-dark" />
+      </label>
+      <label class="toggle-row">
+        <span>Celebrations</span>
+        <input type="checkbox" id="setting-celebrate" checked />
+      </label>
+      <label class="toggle-row">
+        <span>Show archived habits</span>
+        <input type="checkbox" id="setting-archived" />
+      </label>
+      <button type="button" class="btn btn-danger btn-full" id="btn-reset-data">Reset all completion data</button>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="settings-close">Done</button>
+    </div>
+  </dialog>
+
+  <dialog id="users-modal" class="modal modal-wide">
+    <h2>Profiles</h2>
+    <p class="modal-subtitle">Each profile has separate habits, streaks, XP, and achievements.</p>
+    <div id="users-list" class="users-list"></div>
+    <div id="new-user-panel" class="user-form-panel">
+      <h3>Add new profile</h3>
+      <label>Name<input type="text" id="new-user-name" placeholder="e.g. Alex" /></label>
+      <p class="field-label">Avatar</p>
+      <div id="new-user-avatars" class="avatar-picker"></div>
+      <button type="button" class="btn btn-primary" id="btn-create-user">Create Profile</button>
+    </div>
+    <div id="edit-user-panel" class="user-form-panel" style="display:none">
+      <h3>Edit profile</h3>
+      <label>Name<input type="text" id="edit-user-name" /></label>
+      <p class="field-label">Avatar</p>
+      <div id="edit-user-avatars" class="avatar-picker"></div>
+      <div class="modal-actions" style="padding:0;margin-top:12px">
+        <button type="button" class="btn" id="btn-cancel-edit-user">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-save-user">Save</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="users-close">Close</button>
+    </div>
+  </dialog>
+
+  <dialog id="manage-modal" class="modal modal-wide">
+    <h2>Manage Habits</h2>
+    <div id="manage-list"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="manage-close">Close</button>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
