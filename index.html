@@ -29,14 +29,24 @@
 
       <section class="sidebar-stats" id="sidebar-stats"></section>
 
-      <section class="achievements-section">
-        <h2>Achievements</h2>
-        <div id="achievements-list" class="achievements-list"></div>
+      <section class="achievements-section sidebar-collapsible">
+        <button type="button" class="sidebar-section-toggle" aria-expanded="false" aria-controls="achievements-panel">
+          <h2>Achievements</h2>
+          <span class="sidebar-toggle-icon" aria-hidden="true">▾</span>
+        </button>
+        <div id="achievements-panel" class="sidebar-collapse-panel">
+          <div id="achievements-list" class="achievements-list"></div>
+        </div>
       </section>
 
-      <section class="goal-progress">
-        <h2>Goal Progress</h2>
-        <div id="sidebar-progress"></div>
+      <section class="goal-progress sidebar-collapsible">
+        <button type="button" class="sidebar-section-toggle" aria-expanded="false" aria-controls="goal-progress-panel">
+          <h2>Goal Progress</h2>
+          <span class="sidebar-toggle-icon" aria-hidden="true">▾</span>
+        </button>
+        <div id="goal-progress-panel" class="sidebar-collapse-panel">
+          <div id="sidebar-progress"></div>
+        </div>
       </section>
     </aside>
 
@@ -55,7 +65,12 @@
 
       <div id="habits-toolbar" class="habits-toolbar"></div>
 
-      <div id="panel-habits" class="panel active"></div>
+      <div id="panel-habits" class="panel active">
+        <div class="page-loading" id="page-loading" aria-live="polite">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <p>Loading your habits…</p>
+        </div>
+      </div>
       <div id="panel-today" class="panel"></div>
       <div id="panel-monthly" class="panel"></div>
       <div id="panel-quarterly" class="panel"></div>
@@ -202,6 +217,6 @@
     </div>
   </dialog>
 
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
