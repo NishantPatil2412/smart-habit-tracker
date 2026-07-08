@@ -140,13 +140,41 @@ body {
 }
 
 .goal-progress h2,
-.sidebar-nav h2 {
+.sidebar-nav h2,
+.sidebar-section-toggle h2 {
   margin: 0 0 12px;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #6b7280;
+}
+
+.sidebar-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.sidebar-section-toggle h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.sidebar-toggle-icon {
+  display: none;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #9ca3af;
+  transition: transform 0.2s;
 }
 
 .progress-card {
@@ -837,6 +865,43 @@ body {
   font-size: 14px;
 }
 
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #111827;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+html.app-loaded .page-loading {
+  display: none;
+}
+
+body.theme-dark .loading-spinner {
+  border-color: var(--border);
+  border-top-color: var(--text);
+}
+
+body.theme-dark .page-loading {
+  color: var(--muted);
+}
+
 .stat-row {
   display: flex;
   justify-content: space-between;
@@ -1081,8 +1146,15 @@ body {
 .achievements-section {
   padding: 12px 16px;
   border-top: 1px solid #f3f4f6;
+}
+
+.achievements-section .sidebar-collapse-panel {
   max-height: 140px;
   overflow-y: auto;
+}
+
+.goal-progress .sidebar-section-toggle {
+  margin-bottom: 12px;
 }
 
 .achievements-list {
@@ -1981,6 +2053,12 @@ body.theme-dark .today-now-dot {
   min-width: 0;
 }
 
+@media (min-width: 901px) {
+  .sidebar-collapsible .sidebar-collapse-panel {
+    display: block !important;
+  }
+}
+
 /* ─── Responsive: tablet & mobile ─── */
 @media (max-width: 900px) {
   .app {
@@ -2009,14 +2087,50 @@ body.theme-dark .today-now-dot {
     padding: 0 16px 12px;
   }
 
-  .achievements-section {
+  .achievements-section,
+  .goal-progress {
+    padding: 0;
+    overflow: visible;
+    max-height: none;
+  }
+
+  .sidebar-section-toggle {
+    cursor: pointer;
     padding: 12px 16px;
-    max-height: 120px;
+    min-height: 44px;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .goal-progress .sidebar-section-toggle {
+    margin-bottom: 0;
+  }
+
+  .sidebar-toggle-icon {
+    display: block;
+  }
+
+  .sidebar-collapsible:not(.is-open) .sidebar-collapse-panel {
+    display: none;
+  }
+
+  .sidebar-collapsible.is-open .sidebar-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .achievements-section.is-open .sidebar-collapse-panel {
+    padding: 0 16px 12px;
+    max-height: 160px;
     overflow-y: auto;
   }
 
-  .goal-progress {
+  .goal-progress.is-open .sidebar-collapse-panel {
+    padding: 0 16px 16px;
     max-height: 40vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .goal-progress {
     flex: none;
   }
 
