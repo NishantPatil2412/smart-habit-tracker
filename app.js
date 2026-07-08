@@ -625,6 +625,7 @@
   function loadFromDataFile(callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', DATA_FILE, true);
+    xhr.timeout = 8000;
     xhr.onload = function () {
       if (xhr.status === 200 || xhr.status === 0) {
         try {
@@ -637,6 +638,7 @@
       callback(false);
     };
     xhr.onerror = function () { callback(false); };
+    xhr.ontimeout = function () { callback(false); };
     xhr.send();
   }
 
@@ -720,29 +722,77 @@
   }
 
   function initData() {
-    if (loadFromStorage()) {
-      applyTheme();
-      renderUserSwitcher();
-      updateDataStatus('Loaded profiles from browser storage');
-      renderAll();
+    var hadStorage = loadFromStorage();
+    if (!hadStorage) {
+      ensureDefaultUser();
+      loadCurrentUser();
+    }
+    applyTheme();
+    renderCriticalUI();
+    markAppLoaded();
+
+    if (hadStorage) {
+      updateDataStatus('Loaded from browser storage');
+      scheduleDeferredRender();
       return;
     }
+
+    updateDataStatus('Loading…');
+    scheduleDeferredRender();
     loadFromDataFile(function (ok) {
-      if (!ok) {
-        ensureDefaultUser();
-        loadCurrentUser();
-        save();
-        updateDataStatus('Created default profile');
-      } else {
+      if (ok) {
         ensureDefaultUser();
         loadCurrentUser();
         save();
         updateDataStatus('Loaded from ' + DATA_FILE);
+      } else {
+        save();
+        updateDataStatus('Created default profile');
       }
-      renderUserSwitcher();
-      applyTheme();
       renderAll();
     });
+  }
+
+  function syncSettingsForm() {
+    var settingDark = document.getElementById('setting-dark');
+    if (!settingDark) return;
+    settingDark.checked = state.settings.darkMode;
+    document.getElementById('setting-celebrate').checked = state.settings.celebrate;
+    document.getElementById('setting-archived').checked = state.settings.showArchived;
+    document.getElementById('btn-undo').disabled = state.undoStack.length === 0;
+  }
+
+  function renderActiveSecondaryPanel() {
+    var activeTab = document.querySelector('.tab.active');
+    if (!activeTab) return;
+    var tabId = activeTab.getAttribute('data-tab');
+    if (tabId === 'today') renderTodayPanel();
+    else if (tabId === 'monthly') renderMonthlyPanel();
+    else if (tabId === 'quarterly') renderQuarterlyPanel();
+    else if (tabId === 'yearly') renderYearlyPanel();
+    else if (tabId === 'stats') renderStatsPanel();
+    else if (tabId === 'more') renderMorePanel();
+  }
+
+  function renderCriticalUI() {
+    updateLevelBadge();
+    renderUserSwitcher();
+    renderDashboard();
+    renderHabitsToolbar();
+    renderSidebarStats();
+    renderAchievements();
+    renderHabitsPanel();
+    syncSettingsForm();
+  }
+
+  function scheduleDeferredRender() {
+    requestAnimationFrame(function () {
+      renderSidebar();
+    });
+  }
+
+  function markAppLoaded() {
+    document.documentElement.classList.add('app-loaded');
   }
 
   // ─── Gamification, toast, undo ──────────────────────────────────
@@ -2045,31 +2095,9 @@
 
   function renderAll() {
     applyTheme();
-    updateLevelBadge();
-    renderUserSwitcher();
-    renderDashboard();
-    renderHabitsToolbar();
-    renderSidebarStats();
-    renderAchievements();
+    renderCriticalUI();
     renderSidebar();
-    renderHabitsPanel();
-    var settingDark = document.getElementById('setting-dark');
-    if (settingDark) {
-      settingDark.checked = state.settings.darkMode;
-      document.getElementById('setting-celebrate').checked = state.settings.celebrate;
-      document.getElementById('setting-archived').checked = state.settings.showArchived;
-      document.getElementById('btn-undo').disabled = state.undoStack.length === 0;
-    }
-    var activeTab = document.querySelector('.tab.active');
-    if (activeTab) {
-      var tabId = activeTab.getAttribute('data-tab');
-      if (tabId === 'today') renderTodayPanel();
-      else if (tabId === 'monthly') renderMonthlyPanel();
-      else if (tabId === 'quarterly') renderQuarterlyPanel();
-      else if (tabId === 'yearly') renderYearlyPanel();
-      else if (tabId === 'stats') renderStatsPanel();
-      else if (tabId === 'more') renderMorePanel();
-    }
+    renderActiveSecondaryPanel();
   }
 
   // ─── Events ───────────────────────────────────────────────────────
@@ -2200,7 +2228,26 @@
   document.getElementById('data-status').addEventListener('dblclick', linkDataFile);
   document.getElementById('data-status').title = 'Double-click to link a JSON data file for auto-save';
 
+  document.querySelectorAll('.sidebar-section-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (window.matchMedia('(min-width: 901px)').matches) return;
+      var section = btn.closest('.sidebar-collapsible');
+      var isOpen = section.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.matchMedia('(min-width: 901px)').matches) {
+      document.querySelectorAll('.sidebar-collapsible').forEach(function (section) {
+        section.classList.remove('is-open');
+        var btn = section.querySelector('.sidebar-section-toggle');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
   // ─── Boot ─────────────────────────────────────────────────────────
 
-  initData();
+  requestAnimationFrame(initData);
 })();
