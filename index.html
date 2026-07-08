@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Smart Habit Tracker 2024</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -12,12 +12,15 @@
   <div class="app">
     <aside class="sidebar">
       <header class="sidebar-header">
-        <div class="logo">
-          <div class="logo-icon" aria-hidden="true"></div>
-          <div>
-            <h1>Smart Habit<br>Tracker 2024</h1>
-            <p class="level-badge" id="level-badge">Level 1 · 0 XP</p>
+        <div class="sidebar-top-row">
+          <div class="logo">
+            <div class="logo-icon" aria-hidden="true"></div>
+            <div>
+              <h1>Smart Habit<br>Tracker 2024</h1>
+              <p class="level-badge" id="level-badge">Level 1 · 0 XP</p>
+            </div>
           </div>
+          <button type="button" class="mobile-menu-btn" id="btn-mobile-menu" aria-expanded="false" aria-label="Toggle menu">☰</button>
         </div>
         <section class="user-switcher" id="user-switcher"></section>
         <div class="sidebar-actions">
@@ -27,14 +30,15 @@
 
       <section class="sidebar-stats" id="sidebar-stats"></section>
 
-      <section class="goal-progress">
-        <h2>Goal Progress</h2>
-        <div id="sidebar-progress"></div>
-      </section>
-
       <section class="achievements-section">
         <h2>Achievements</h2>
         <div id="achievements-list" class="achievements-list"></div>
+      </section>
+
+      <div class="sidebar-extra" id="sidebar-extra">
+      <section class="goal-progress">
+        <h2>Goal Progress</h2>
+        <div id="sidebar-progress"></div>
       </section>
 
       <nav class="sidebar-nav">
@@ -52,6 +56,7 @@
         </div>
         <p class="data-hint" id="data-status">Data saved locally</p>
       </nav>
+      </div>
     </aside>
 
     <main class="main">
