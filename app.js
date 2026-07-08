@@ -1881,7 +1881,6 @@
     el.querySelectorAll('.edit-habit').forEach(function (btn) {
       btn.addEventListener('click', function () {
         openHabitModal(btn.getAttribute('data-id'));
-        document.getElementById('manage-modal').close();
       });
     });
     el.querySelectorAll('.archive-habit').forEach(function (btn) {
@@ -2007,6 +2006,22 @@
     modal.showModal();
   }
 
+  function renderMorePanel() {
+    document.getElementById('setting-dark').checked = state.settings.darkMode;
+    document.getElementById('setting-celebrate').checked = state.settings.celebrate;
+    document.getElementById('setting-archived').checked = state.settings.showArchived;
+    document.getElementById('btn-undo').disabled = state.undoStack.length === 0;
+    renderManageList();
+  }
+
+  function saveSettingsFromForm() {
+    state.settings.darkMode = document.getElementById('setting-dark').checked;
+    state.settings.celebrate = document.getElementById('setting-celebrate').checked;
+    state.settings.showArchived = document.getElementById('setting-archived').checked;
+    save();
+    renderAll();
+  }
+
   // ─── Tabs ─────────────────────────────────────────────────────────
 
   function switchTab(tabId) {
@@ -2024,6 +2039,7 @@
     if (tabId === 'quarterly') renderQuarterlyPanel();
     if (tabId === 'yearly') renderYearlyPanel();
     if (tabId === 'stats') renderStatsPanel();
+    if (tabId === 'more') renderMorePanel();
     if (tabId === 'habits') { renderDashboard(); renderHabitsToolbar(); renderHabitsPanel(); }
   }
 
@@ -2037,6 +2053,13 @@
     renderAchievements();
     renderSidebar();
     renderHabitsPanel();
+    var settingDark = document.getElementById('setting-dark');
+    if (settingDark) {
+      settingDark.checked = state.settings.darkMode;
+      document.getElementById('setting-celebrate').checked = state.settings.celebrate;
+      document.getElementById('setting-archived').checked = state.settings.showArchived;
+      document.getElementById('btn-undo').disabled = state.undoStack.length === 0;
+    }
     var activeTab = document.querySelector('.tab.active');
     if (activeTab) {
       var tabId = activeTab.getAttribute('data-tab');
@@ -2045,6 +2068,7 @@
       else if (tabId === 'quarterly') renderQuarterlyPanel();
       else if (tabId === 'yearly') renderYearlyPanel();
       else if (tabId === 'stats') renderStatsPanel();
+      else if (tabId === 'more') renderMorePanel();
     }
   }
 
@@ -2109,28 +2133,9 @@
     renderAll();
   });
 
-  document.getElementById('btn-manage').addEventListener('click', function () {
-    closeMobileSidebar();
-    renderManageList();
-    document.getElementById('manage-modal').showModal();
-  });
-
-  document.getElementById('btn-settings').addEventListener('click', function () {
-    closeMobileSidebar();
-    document.getElementById('setting-dark').checked = state.settings.darkMode;
-    document.getElementById('setting-celebrate').checked = state.settings.celebrate;
-    document.getElementById('setting-archived').checked = state.settings.showArchived;
-    document.getElementById('settings-modal').showModal();
-  });
-
-  document.getElementById('settings-close').addEventListener('click', function () {
-    state.settings.darkMode = document.getElementById('setting-dark').checked;
-    state.settings.celebrate = document.getElementById('setting-celebrate').checked;
-    state.settings.showArchived = document.getElementById('setting-archived').checked;
-    save();
-    document.getElementById('settings-modal').close();
-    renderAll();
-  });
+  document.getElementById('setting-dark').addEventListener('change', saveSettingsFromForm);
+  document.getElementById('setting-celebrate').addEventListener('change', saveSettingsFromForm);
+  document.getElementById('setting-archived').addEventListener('change', saveSettingsFromForm);
 
   document.getElementById('btn-reset-data').addEventListener('click', function () {
     if (confirm('Clear ALL completion records? Habits will be kept.')) {
@@ -2145,10 +2150,6 @@
   });
 
   document.getElementById('btn-undo').addEventListener('click', undo);
-
-  document.getElementById('manage-close').addEventListener('click', function () {
-    document.getElementById('manage-modal').close();
-  });
 
   document.getElementById('btn-export').addEventListener('click', exportDataFile);
 
@@ -2198,23 +2199,6 @@
   // Double-click data status to link a file for auto-save (Chrome/Edge)
   document.getElementById('data-status').addEventListener('dblclick', linkDataFile);
   document.getElementById('data-status').title = 'Double-click to link a JSON data file for auto-save';
-
-  var mobileMenuBtn = document.getElementById('btn-mobile-menu');
-  function closeMobileSidebar() {
-    var appEl = document.querySelector('.app');
-    if (!appEl || !mobileMenuBtn) return;
-    appEl.classList.remove('sidebar-open');
-    mobileMenuBtn.setAttribute('aria-expanded', 'false');
-    mobileMenuBtn.textContent = '☰';
-  }
-  if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', function () {
-      var appEl = document.querySelector('.app');
-      var isOpen = appEl.classList.toggle('sidebar-open');
-      mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      mobileMenuBtn.textContent = isOpen ? '✕' : '☰';
-    });
-  }
 
   // ─── Boot ─────────────────────────────────────────────────────────
 
