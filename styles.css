@@ -6,18 +6,26 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   background: #f4f5f7;
   color: #1a1a1a;
   line-height: 1.4;
+  overflow-x: hidden;
 }
 
 .app {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+  min-width: 0;
 }
 
 /* Sidebar */
@@ -238,7 +246,10 @@ body {
 .main {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 28px 32px;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabs {
@@ -246,6 +257,14 @@ body {
   gap: 24px;
   border-bottom: 1px solid #e5e7eb;
   margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex-wrap: nowrap;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -259,6 +278,8 @@ body {
   font-weight: 500;
   color: #6b7280;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab:hover {
@@ -281,8 +302,9 @@ body {
 /* Habit cards grid */
 .habits-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 20px;
+  min-width: 0;
 }
 
 .habit-card {
@@ -421,8 +443,9 @@ body {
 
 .period-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 20px;
+  min-width: 0;
 }
 
 .period-card {
@@ -1044,6 +1067,12 @@ body {
   border: 1px solid #e5e7eb;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  min-width: 0;
+}
+
+.dashboard-left {
+  flex: 1;
+  min-width: 0;
 }
 
 .dashboard-greeting {
@@ -1883,18 +1912,361 @@ body.theme-dark .today-now-dot {
   background: #f9fafb;
 }
 
+/* Mobile menu toggle — hidden on desktop */
+.mobile-menu-btn {
+  display: none;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #374151;
+}
+
+.sidebar-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sidebar-top-row .logo {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─── Responsive: tablet & mobile ─── */
 @media (max-width: 900px) {
   .app {
     flex-direction: column;
     height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
   }
 
   .sidebar {
     width: 100%;
-    max-height: 40vh;
+    max-height: none;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    overflow: visible;
   }
 
-  .habits-grid {
+  .sidebar-header {
+    padding: 16px;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .sidebar-stats {
+    padding: 0 16px 12px;
+  }
+
+  .achievements-section {
+    padding: 12px 16px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .sidebar-extra {
+    display: none;
+    max-height: 50vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .app.sidebar-open .sidebar-extra {
+    display: block;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .main {
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    overflow: visible;
+    flex: 1;
+  }
+
+  .tabs {
+    gap: 16px;
+    margin-bottom: 16px;
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .tab {
+    font-size: 13px;
+    padding-bottom: 10px;
+  }
+
+  .dashboard-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .dashboard-greeting {
+    font-size: 18px;
+  }
+
+  .dashboard-ring {
+    align-self: center;
+  }
+
+  .week-nav {
+    justify-content: center;
+  }
+
+  .week-nav-label {
+    min-width: auto;
+    flex: 1;
+  }
+
+  .habits-grid,
+  .period-grid,
+  .stats-grid {
     grid-template-columns: 1fr;
   }
+
+  .toolbar-row {
+    flex-direction: column;
+  }
+
+  .habit-sort {
+    width: 100%;
+  }
+
+  .habit-card {
+    padding: 16px;
+  }
+
+  .habit-card-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .habit-actions {
+    flex-wrap: wrap;
+  }
+
+  .week-tracker-grid {
+    gap: 4px;
+  }
+
+  .week-day {
+    padding: 8px 2px;
+    gap: 4px;
+  }
+
+  .week-day-dot {
+    width: 24px;
+    height: 24px;
+  }
+
+  .week-day-name {
+    font-size: 10px;
+  }
+
+  .period-controls {
+    flex-wrap: wrap;
+  }
+
+  .year-months {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stats-charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bar-row {
+    grid-template-columns: 24px 1fr 1.5fr 32px;
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .today-header {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .today-allday {
+    padding: 10px 16px;
+    flex-direction: column;
+  }
+
+  .today-allday-label {
+    width: auto;
+    padding-top: 0;
+  }
+
+  .today-scroll {
+    max-height: 60vh;
+    min-height: 320px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .modal {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+  }
+
+  .manage-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .manage-item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .user-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-list-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .toast-container {
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    left: max(16px, env(safe-area-inset-left));
+  }
+
+  .toast {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-header {
+    padding: 12px;
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  .main {
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .logo h1 {
+    font-size: 14px;
+  }
+
+  .current-user {
+    padding: 8px 10px;
+  }
+
+  .current-user-avatar {
+    font-size: 24px;
+  }
+
+  .mini-stat-val {
+    font-size: 14px;
+  }
+
+  .mini-stat-lbl {
+    font-size: 8px;
+  }
+
+  .dashboard-greeting {
+    font-size: 16px;
+  }
+
+  .dashboard-quote {
+    font-size: 12px;
+  }
+
+  .tabs {
+    gap: 12px;
+  }
+
+  .tab {
+    font-size: 12px;
+  }
+
+  .habit-card-title {
+    font-size: 15px;
+  }
+
+  .btn {
+    min-height: 40px;
+    padding: 10px 14px;
+  }
+
+  .btn-sm {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .chip {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .quarter-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .year-months {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bar-row {
+    grid-template-columns: 20px 1fr 36px;
+  }
+
+  .bar-row .bar-track {
+    display: none;
+  }
+
+  .today-date-title {
+    font-size: 16px;
+  }
+
+  .today-time-col {
+    width: 44px;
+  }
+
+  .today-hour-label {
+    font-size: 10px;
+    right: 4px;
+  }
+}
+
+body.theme-dark .mobile-menu-btn {
+  background: #151d28;
+  border-color: var(--border);
+  color: var(--text);
 }
