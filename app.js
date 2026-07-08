@@ -2110,11 +2110,13 @@
   });
 
   document.getElementById('btn-manage').addEventListener('click', function () {
+    closeMobileSidebar();
     renderManageList();
     document.getElementById('manage-modal').showModal();
   });
 
   document.getElementById('btn-settings').addEventListener('click', function () {
+    closeMobileSidebar();
     document.getElementById('setting-dark').checked = state.settings.darkMode;
     document.getElementById('setting-celebrate').checked = state.settings.celebrate;
     document.getElementById('setting-archived').checked = state.settings.showArchived;
@@ -2196,6 +2198,23 @@
   // Double-click data status to link a file for auto-save (Chrome/Edge)
   document.getElementById('data-status').addEventListener('dblclick', linkDataFile);
   document.getElementById('data-status').title = 'Double-click to link a JSON data file for auto-save';
+
+  var mobileMenuBtn = document.getElementById('btn-mobile-menu');
+  function closeMobileSidebar() {
+    var appEl = document.querySelector('.app');
+    if (!appEl || !mobileMenuBtn) return;
+    appEl.classList.remove('sidebar-open');
+    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    mobileMenuBtn.textContent = '☰';
+  }
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', function () {
+      var appEl = document.querySelector('.app');
+      var isOpen = appEl.classList.toggle('sidebar-open');
+      mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      mobileMenuBtn.textContent = isOpen ? '✕' : '☰';
+    });
+  }
 
   // ─── Boot ─────────────────────────────────────────────────────────
 
